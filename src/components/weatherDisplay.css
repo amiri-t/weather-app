@@ -1,0 +1,23 @@
+.container {
+  width: 94%;
+  border-radius: 30px;
+  height: 90vh;
+  margin: auto;
+  margin-top: 2em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--sunnyGradient);
+  position: relative;
+}
+.container .logo {
+  width: 100px;
+  position: absolute;
+  top: 1%;
+  left: 1%;
+}
+.container .error {
+  color: white;
+  text-align: center;
+  margin-top: 1em;
+}

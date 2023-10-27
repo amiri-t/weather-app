@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import clearIcon from "../assets/clear.webp";
 import cloudIcon from "../assets/cloud.png";
@@ -6,47 +6,112 @@ import drizzleIcon from "../assets/drizzle.png";
 import rainIcon from "../assets/rain.png";
 import snowIcon from "../assets/snow.png";
 import windIcon from "../assets/wind.png";
-import clearBgImg from "../assets/cleanBackgroundImg.jpg";
+import mistIcon from "../assets/mistIcon.webp";
 import humidity from "../assets/humidity.png";
+import logo from "../assets/logo.png";
 import { BsSearch } from "react-icons/bs";
+import axios from "axios";
+import { motion } from "framer-motion";
 
 const WeatherDisplay = () => {
+  const [data, setData] = useState({});
+  const [location, setLocation] = useState("");
+  const [error, setError] = useState(null);
+  var apiKey = "db9d7bc205045ccda12ff4e66ee319d6";
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${apiKey}`;
+
+  const searchLocation = (event) => {
+    if (event.key === "Enter") {
+      axios
+        .get(url)
+        .then((response) => {
+          setData(response.data);
+          console.log(response.data);
+          setError(null);
+        })
+        .catch((error) => {
+          setError("Please enter a valid city or location"); // Set the error message
+        });
+    }
+  };
+
+  // ket funksion e kom bo per mi bo iconat qe mu var prej motit, pra. dynamically
+  const weatherIcons = {
+    Clear: clearIcon,
+    Clouds: cloudIcon,
+    Drizzle: drizzleIcon,
+    Rain: rainIcon,
+    Snow: snowIcon,
+    Mist: mistIcon,
+  };
+  const weatherCondition = data.weather ? data.weather[0].main : null;
+  const iconSrc = weatherIcons[weatherCondition] || clearIcon;
+
   return (
     <Container>
+      <img src={logo} className="logo" alt="" />
       <div className="searchBar">
-        <input type="search" placeholder="Enter City Name..." />
+        <input
+          value={location}
+          onChange={(event) => setLocation(event.target.value)}
+          onKeyPress={searchLocation}
+          type="search"
+          placeholder="Enter City or Location..."
+        />
         <button>
-          <BsSearch className="searchIcon" />
+          <BsSearch
+            disabled={!location.trim()}
+            className="searchIcon"
+            onClick={() => searchLocation()}
+          />
         </button>
       </div>
-      <div className="weatherOutput">
-        <div className="left">
-          <img src={clearIcon} alt="" />
-        </div>
-        <div className="right">
-          <h1 className="temperature">24°C</h1>
-          <h3>Clear</h3>
-          <h2>
-            Podujeva, <span>KOSOVO</span>
-          </h2>
-          <div className="data">
-            <div>
-              <img src={humidity} alt="" />
-              <span>
-                <h2>70%</h2>
-                <p>Humidity</p>
-              </span>
-            </div>
-            <div>
-              <img src={windIcon} alt="" />
-              <span>
-                <h2>17 Km/h</h2>
-                <p>Wind Speed</p>
-              </span>
-            </div>
+      {error ? (
+        <p className="error">{error}</p>
+      ) : (
+        data.name != undefined && (
+          <div className="weatherOutput">
+            <motion.div
+              initial={{ opacity: 0, x: -100 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1, delay: 0.2 }}
+              className="left"
+            >
+              <img src={iconSrc} alt="" />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.7 }}
+              className="right"
+            >
+              {data.main ? (
+                <h1 className="temperature">{data.main.temp.toFixed()}°C</h1>
+              ) : null}
+              {data.weather ? <h3>{data.weather[0].main}</h3> : null}
+              <h2>
+                {data.name}, {data.sys ? <span>{data.sys.country}</span> : null}
+              </h2>
+              <div className="data">
+                <div>
+                  <img src={humidity} alt="" />
+                  <span>
+                    {data.main ? <h2>{data.main.humidity}%</h2> : null}
+                    <p>Humidity</p>
+                  </span>
+                </div>
+                <div>
+                  <img src={windIcon} alt="" />
+                  <span>
+                    {data.wind ? <h2>{data.wind.speed} Km/h</h2> : null}
+                    <p>Wind Speed</p>
+                  </span>
+                </div>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      </div>
+        )
+      )}
     </Container>
   );
 };
@@ -60,12 +125,25 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   background: var(--sunnyGradient);
+  position: relative;
+  .logo {
+    width: 100px;
+    position: absolute;
+    top: 1%;
+    left: 1%;
+  }
+  .error {
+    color: white;
+    text-align: center;
+    margin-top: 1em;
+  }
   .searchBar {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 1em;
     padding-top: 3em;
+    transition: 1.4s;
     input {
       background: white;
       padding: 14px 20px;
@@ -95,6 +173,7 @@ const Container = styled.div`
     }
   }
   .weatherOutput {
+    transition: 1.4s;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -102,6 +181,7 @@ const Container = styled.div`
     color: var(--fontPrimaryColor);
     .left {
       img {
+        width: 400px;
         max-width: 700px;
       }
     }
@@ -167,6 +247,7 @@ const Container = styled.div`
     width: 99%;
     margin-top: 7px;
     .searchBar {
+      margin-top: 2em;
       input {
         width: 70%;
       }
