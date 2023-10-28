@@ -11,20 +11,31 @@ body {
   -moz-osx-font-smoothing: grayscale;
   font-family: "Montserrat", sans-serif;
   overflow-x: hidden;
+  background: #3069a7;
 }
 :root {
   --primaryColor: #4fc0d6;
   --fontPrimaryColor: rgb(255, 255, 255);
   --fontSecondaryColor: #dadada;
-  --backgroundGradient: radial-gradient(
-    circle at 10% 45%,
-    #88bbf1 2%,
-    #ffffff 25%
-  );
   --sunnyGradient: radial-gradient(
     circle at 10% 20%,
     rgb(145, 183, 231) 0%,
     rgb(48, 105, 167) 45.5%
+  );
+  --cloudyGradient: radial-gradient(
+    circle at 10% 20%,
+    rgb(168, 153, 142) 0%,
+    rgb(91, 95, 99) 45.5%
+  );
+  --rainyGradient: radial-gradient(
+    circle at 10% 20%,
+    rgb(138, 132, 127) 0%,
+    rgb(69, 71, 73) 45.5%
+  );
+  --snowyGradient: radial-gradient(
+    circle at 10% 20%,
+    rgb(205, 206, 207) 0%,
+    rgb(108, 122, 126) 45.5%
   );
 }
 code {
